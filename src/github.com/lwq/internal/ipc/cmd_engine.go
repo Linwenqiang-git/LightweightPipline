@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"runtime"
 )
 
 type CmdEngine struct {
@@ -18,10 +19,14 @@ func NewEngine(excutePath string) Engine {
 }
 
 func (c *CmdEngine) RunCommand(command string) (string, error) {
-	command = "cd " + c.projectPath + " ;" + command
+	command = "cd " + c.projectPath + " &&" + command
 	println(command + "\n")
-	cmd := exec.Command("sh", command)
-
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/C", command)
+	} else {
+		cmd = exec.Command("sh", "-c", command)
+	}
 	var stdout bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stdout
