@@ -21,9 +21,9 @@ type Configure struct {
 
 func ProvideConfigure() (Configure, error) {
 	once.Do(func() {
-		viper.SetConfigName("appsettings")                                                               // 配置文件名
-		viper.SetConfigType("yaml")                                                                      // 配置文件类型
-		viper.AddConfigPath("D:\\Project\\GoProject\\LightweightPipline\\src\\github.com\\lwq\\configs") // 配置文件路径(需配置本地机密文件地址)
+		viper.SetConfigName("appsettings") // 配置文件名
+		viper.SetConfigType("yaml")        // 配置文件类型
+		viper.AddConfigPath("../configs")  // 配置文件路径(需配置本地机密文件地址)
 		// 加载配置文件
 		err := viper.ReadInConfig()
 		if err != nil {
