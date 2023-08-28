@@ -2,6 +2,7 @@ package aggregates
 
 import "gorm.io/gorm"
 
+//命令信息（界面维护）
 type Command struct {
 	gorm.Model
 	Detail    string `sql:"COMMENT:'命令细节'"`

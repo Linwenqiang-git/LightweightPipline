@@ -18,7 +18,7 @@ func BuildDevelopeCenter(c *gin.Context) {
 	if err != nil {
 		result = Fail(200, err.Error())
 	} else {
-		result = SuccessWithMessage("任务已成功构建", nil)
+		result = SuccessWithMessage("任务：ufx-scm-cloud-developecenter 已成功构建", nil)
 	}
 	c.JSON(200, result)
 }
@@ -29,8 +29,8 @@ func BuildProductOrderCenter(c *gin.Context) {
 	if err != nil {
 		c.JSON(200, Fail(200, err.Error()))
 	}
-	go appbuildService.AppBuild("ufx-scm-cloud-productordercenter", "dev")
-	result := SuccessWithMessage("任务已成功构建", nil)
+	go appbuildService.AppBuild("ufx-scm-cloud-productordercenter", "stage")
+	result := SuccessWithMessage("任务：ufx-scm-cloud-productordercenter 已成功构建", nil)
 	c.JSON(200, result)
 }
 
