@@ -14,7 +14,7 @@ var configure Configure
 var once sync.Once
 
 type Configure struct {
-	System *System
+	System *SystemOption
 	Mysql  *Mysql
 	Pgsql  *Pgsql
 }

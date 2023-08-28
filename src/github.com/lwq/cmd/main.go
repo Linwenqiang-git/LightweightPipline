@@ -2,6 +2,7 @@ package main
 
 import (
 	build_app "lightweightpipline/api"
+	provider "lightweightpipline/cmd/wire"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,7 +10,11 @@ import (
 func main() {
 	r := gin.Default()
 	RoutingBinding(r)
-	r.Run("127.0.0.1:8090") // 监听并在 0.0.0.0:8080 上启动服务
+	config, err := provider.GetConfigure()
+	if err != nil {
+		panic("read config err:" + err.Error())
+	}
+	r.Run(config.System.Addr) // 监听并在 0.0.0.0:8080 上启动服务
 }
 
 func RoutingBinding(g *gin.Engine) {

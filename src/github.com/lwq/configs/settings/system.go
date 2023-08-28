@@ -2,16 +2,16 @@ package settings
 
 import "github.com/spf13/viper"
 
-type System struct {
+type SystemOption struct {
 	Env    string
-	Addr   int
+	Addr   string
 	DbType string
 }
 
-func NewSystemConfig() *System {
-	return &System{
+func NewSystemConfig() *SystemOption {
+	return &SystemOption{
 		Env:    viper.GetString("system.env"),
-		Addr:   viper.GetInt("system.addr"),
+		Addr:   viper.GetString("system.addr"),
 		DbType: viper.GetString("system.db-type"),
 	}
 }
