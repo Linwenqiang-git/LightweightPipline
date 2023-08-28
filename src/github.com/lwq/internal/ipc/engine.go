@@ -1,5 +1,5 @@
 package ipc
 
 type Engine interface {
-	RunCommand(command string) (string, error)
+	RunCommand(command string) (string,float64, error)
 }

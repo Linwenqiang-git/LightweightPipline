@@ -48,9 +48,10 @@ type AppBuildRecordDetail struct {
 	StageId       uint
 	StageName     string
 	CommandId     uint
-	Command       string `sql:"COMMENT:'命令'"`
-	Output        string `sql:"COMMENT:'命令行输出'"`
-	Result        uint   `sql:"COMMENT:'运行结果'"`
+	Command       string  `sql:"COMMENT:'命令'"`
+	Output        string  `sql:"COMMENT:'命令行输出'"`
+	RunTime       float64 `sql:"COMMENT:'运行时间（秒）'"`
+	Result        uint    `sql:"COMMENT:'运行结果'"`
 }
 
 func (AppBuildRecordDetail) TableName() string {

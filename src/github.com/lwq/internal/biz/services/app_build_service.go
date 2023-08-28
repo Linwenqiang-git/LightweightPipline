@@ -11,6 +11,7 @@ import (
 	buildResult "lightweightpipline/internal/data/consts"
 	. "lightweightpipline/internal/ipc"
 	. "lightweightpipline/internal/utils/orders"
+	"math"
 	"strconv"
 	"time"
 
@@ -130,7 +131,6 @@ func (b *AppBuildService) getImageName(appName string) (string, error) {
 
 // 获取构建版本
 func (b *AppBuildService) getBuildVersion(appName string) (uint, error) {
-
 	ctx := context.Background()
 	resdisOption := NewRedisOption()
 	date := time.Now().Format("2006-01-02")
@@ -139,6 +139,13 @@ func (b *AppBuildService) getBuildVersion(appName string) (uint, error) {
 	value, err := redis.Incr(ctx, key).Result()
 	if err != nil {
 		return 0, fmt.Errorf("获取版本号失败：%s", err.Error())
+	}
+	if value == 1 {
+		expiration := 86410 //24小时零10秒
+		_, err = redis.Expire(ctx, key, time.Duration(expiration)*time.Second).Result()
+		if err != nil {
+			return 0, fmt.Errorf("Error setting expiration:%s", err.Error())
+		}
 	}
 	return uint(value), nil
 }
@@ -152,14 +159,16 @@ func (b *AppBuildService) excuteCommand(projectPath string, buildRecore *AppBuil
 	isSuccess := true
 	for _, command := range excuteCommands {
 		//执行命令
-		result, err := engine.RunCommand(command.Command)
+		result, duration, err := engine.RunCommand(command.Command)
 		if err != nil {
 			command.Output = err.Error()
+			fmt.Println("Command output:", command.Output)
 			command.Result = buildResult.Fail
 		} else {
 			command.Output = result
 			command.Result = buildResult.Success
 		}
+		command.RunTime = math.Round(duration*1000) / 1000
 		b.dbContext.GetDb().Save(command)
 		if command.Result == buildResult.Fail {
 			isSuccess = false
