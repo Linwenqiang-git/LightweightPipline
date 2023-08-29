@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/ahmetb/go-linq/v3"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type AppBuildService struct {
@@ -57,6 +58,7 @@ func (b *AppBuildService) AppBuild(appName, branchName string) error {
 	if len(commandInfo) == 0 {
 		return fmt.Errorf("应用%s未设置可用构建命令", appName)
 	}
+	//获取镜像名称
 	imageName, err := b.getImageName(appName)
 	if err != nil {
 		return err
@@ -66,10 +68,11 @@ func (b *AppBuildService) AppBuild(appName, branchName string) error {
 		return err
 	}
 	go b.excuteCommand(appInfo.Path, appBuildRecord, buildRecordDetail)
+	log.Info(fmt.Sprintf("start excute %s commands", appName))
 	return nil
 }
 
-// 添加执行记录
+// 添加构建记录
 func (b *AppBuildService) addBuildRecore(appId uint, imageName string, branch string, buildStepInfo []AppBuildStep, commandInfo []StageCommand) (*AppBuildRecord, []AppBuildRecordDetail, error) {
 	//生成构建记录主表
 	appBuildRecord := AppBuildRecord{
@@ -90,7 +93,7 @@ func (b *AppBuildService) addBuildRecore(appId uint, imageName string, branch st
 	var buildRecordDetail []AppBuildRecordDetail
 	for _, stage := range buildStepInfo {
 		for _, command := range commandInfo {
-			if command.StageId == stage.ID {
+			if command.StageId == stage.StageId {
 				detail := AppBuildRecordDetail{
 					BuildRecordId: buildRecordId,
 					StageId:       stage.ID,
@@ -109,6 +112,10 @@ func (b *AppBuildService) addBuildRecore(appId uint, imageName string, branch st
 				buildRecordDetail = append(buildRecordDetail, detail)
 			}
 		}
+	}
+	if len(buildRecordDetail) == 0 {
+		tx.Rollback()
+		return nil, nil, fmt.Errorf("未生成构建记录明细")
 	}
 	result = tx.Create(&buildRecordDetail)
 	if result.Error != nil {

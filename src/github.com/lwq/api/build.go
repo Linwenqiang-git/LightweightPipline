@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	service "lightweightpipline/internal/biz/services"
 	. "lightweightpipline/internal/data/models"
 
@@ -8,36 +9,36 @@ import (
 )
 
 // 构建大货前服务
-func BuildDevelopeCenter(c *gin.Context) {
-	appbuildService, err := service.GetAppBuildService()
-	if err != nil {
-		c.JSON(200, Fail(200, err.Error()))
-	}
-	err = appbuildService.AppBuild("ufx-scm-cloud-developecenter", "stage")
-	var result Response
-	if err != nil {
-		result = Fail(200, err.Error())
-	} else {
-		result = SuccessWithMessage("任务：ufx-scm-cloud-developecenter 已成功构建", nil)
-	}
-	c.JSON(200, result)
+func buildDevelopeCenter(c *gin.Context) {
+	buildProject(c, "ufx-scm-cloud-developecenter", "stage")
 }
 
 // 构建订单服务
-func BuildProductOrderCenter(c *gin.Context) {
+func buildProductOrderCenter(c *gin.Context) {
+	buildProject(c, "ufx-scm-cloud-productordercenter", "stage")
+}
+
+// 绑定构建服务
+func BindingBuildAppService(g *gin.Engine) {
+	engineApi := g.Group("/api/build")
+	{
+		engineApi.GET("/developcenter", buildDevelopeCenter)
+		engineApi.GET("/productordercenter", buildProductOrderCenter)
+	}
+}
+
+// 构建项目
+func buildProject(c *gin.Context, appName, branchName string) {
 	appbuildService, err := service.GetAppBuildService()
 	if err != nil {
 		c.JSON(200, Fail(200, err.Error()))
 	}
-	go appbuildService.AppBuild("ufx-scm-cloud-productordercenter", "stage")
-	result := SuccessWithMessage("任务：ufx-scm-cloud-productordercenter 已成功构建", nil)
-	c.JSON(200, result)
-}
-
-func BindingBuildAppService(g *gin.Engine) {
-	engineApi := g.Group("/api/build")
-	{
-		engineApi.GET("/developcenter", BuildDevelopeCenter)
-		engineApi.GET("/productordercenter", BuildProductOrderCenter)
+	err = appbuildService.AppBuild(appName, branchName)
+	var result Response
+	if err != nil {
+		result = Fail(500, err.Error())
+	} else {
+		result = SuccessWithMessage(fmt.Sprintf("任务：%s 已成功构建", appName), nil)
 	}
+	c.JSON(200, result)
 }

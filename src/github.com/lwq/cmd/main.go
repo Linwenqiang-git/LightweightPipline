@@ -3,6 +3,7 @@ package main
 import (
 	build_app "lightweightpipline/api"
 	provider "lightweightpipline/cmd/wire"
+	. "lightweightpipline/configs/settings/log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +15,8 @@ func main() {
 	if err != nil {
 		panic("read config err:" + err.Error())
 	}
-	r.Run(config.System.Addr) // 监听并在 0.0.0.0:8080 上启动服务
+	NewLogOption().SetGlobalLogger()
+	r.Run(config.System.Addr)
 }
 
 func RoutingBinding(g *gin.Engine) {

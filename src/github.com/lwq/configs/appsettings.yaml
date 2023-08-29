@@ -43,3 +43,5 @@ redis:
   ConnectTimeout: 300
   RedisPrefix: 'LightWeightPipline'
 
+log:
+  logPath: 'D:\\'
