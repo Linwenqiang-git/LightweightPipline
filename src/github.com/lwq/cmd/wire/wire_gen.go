@@ -10,10 +10,12 @@ import (
 	"github.com/google/wire"
 	"lightweightpipline/configs"
 	"lightweightpipline/internal/biz/repo"
+	repo2 "lightweightpipline/internal/data/repo"
 )
 
 // Injectors from wire.go:
 
+// 配置信息
 func GetConfigure() (config.Configure, error) {
 	configure, err := config.ProvideConfigure()
 	if err != nil {
@@ -22,16 +24,34 @@ func GetConfigure() (config.Configure, error) {
 	return configure, nil
 }
 
+// 数据库上下文
 func GetDbContext() (*repo.DbContext, error) {
 	configure, err := config.ProvideConfigure()
 	if err != nil {
-		return &repo.DbContext{}, err
+		return nil, err
 	}
 	dbContext, err := repo.ProvideDbContext(configure)
 	if err != nil {
-		return &repo.DbContext{}, err
+		return nil, err
 	}
 	return dbContext, nil
+}
+
+// 仓储层
+func NewCommandRepo() (repo.ICommandRepo, error) {
+	configure, err := config.ProvideConfigure()
+	if err != nil {
+		return nil, err
+	}
+	dbContext, err := repo.ProvideDbContext(configure)
+	if err != nil {
+		return nil, err
+	}
+	iCommandRepo, err := repo2.NewCommandRepo(dbContext)
+	if err != nil {
+		return nil, err
+	}
+	return iCommandRepo, nil
 }
 
 // wire.go:
@@ -39,3 +59,5 @@ func GetDbContext() (*repo.DbContext, error) {
 var configureSet = wire.NewSet(config.ProvideConfigure)
 
 var dbContextSet = wire.NewSet(configureSet, repo.ProvideDbContext)
+
+var commandRepoSet = wire.NewSet(dbContextSet, repo2.NewCommandRepo)

@@ -5,21 +5,29 @@ package wire
 
 import (
 	conf "lightweightpipline/configs"
-	dbContext "lightweightpipline/internal/biz/repo"
+	irepo "lightweightpipline/internal/biz/repo"
+	data "lightweightpipline/internal/data/repo"
 
 	"github.com/google/wire"
 )
 
 var configureSet = wire.NewSet(conf.ProvideConfigure)
 
-var dbContextSet = wire.NewSet(configureSet, dbContext.ProvideDbContext)
+var dbContextSet = wire.NewSet(configureSet, irepo.ProvideDbContext)
 
+var commandRepoSet = wire.NewSet(dbContextSet, data.NewCommandRepo)
+
+// 配置信息
 func GetConfigure() (conf.Configure, error) {
-	wire.Build(configureSet)
-	return conf.Configure{}, nil
+	panic(wire.Build(configureSet))
 }
 
-func GetDbContext() (dbContext.DbContext, error) {
-	wire.Build(dbContextSet)
-	return dbContext.DbContext{}, nil
+// 数据库上下文
+func GetDbContext() (*irepo.DbContext, error) {
+	panic(wire.Build(dbContextSet))
+}
+
+// 仓储层
+func NewCommandRepo() (irepo.ICommandRepo, error) {
+	panic(wire.Build(commandRepoSet))
 }

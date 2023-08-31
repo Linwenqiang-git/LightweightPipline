@@ -5,8 +5,10 @@ import "gorm.io/gorm"
 //应用信息（界面维护）
 type Application struct {
 	gorm.Model
-	Name string `sql:"COMMENT:'应用名称'"`
-	Path string `sql:"COMMENT:'应用路径'"`
+	Name             string `sql:"COMMENT:'应用名称'"`
+	Path             string `sql:"COMMENT:'应用路径'"`
+	ServiceName      string `sql:"COMMENT:'服务名称'"`
+	ClusterNameSpace string `sql:"COMMENT:'集群命令命名空间'"`
 }
 
 func (Application) TableName() string {
@@ -49,6 +51,7 @@ type AppBuildRecordDetail struct {
 	StageName     string
 	CommandId     uint
 	Command       string  `sql:"COMMENT:'命令'"`
+	SecondCommand string  `sql:"COMMENT:'第二命令'"`
 	Output        string  `sql:"COMMENT:'命令行输出'"`
 	RunTime       float64 `sql:"COMMENT:'运行时间（秒）'"`
 	Result        uint    `sql:"COMMENT:'运行结果'"`
