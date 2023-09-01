@@ -17,6 +17,7 @@ type Configure struct {
 	System *SystemOption
 	Mysql  *Mysql
 	Pgsql  *Pgsql
+	Redis  *RedisOption
 }
 
 func ProvideConfigure() (Configure, error) {
@@ -34,6 +35,7 @@ func ProvideConfigure() (Configure, error) {
 			System: NewSystemConfig(),
 			Mysql:  NewMysql(),
 			Pgsql:  NewPgSql(),
+			Redis:  NewRedisOption(),
 		}
 	})
 	return configure, nil

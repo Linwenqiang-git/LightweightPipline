@@ -164,15 +164,18 @@ func (b *AppBuildService) getBuildVersion(appName string) (uint, error) {
 	resdisOption := NewRedisOption()
 	date := time.Now().Format("2006-01-02")
 	key := resdisOption.RedisPrefix + ":" + appName + date
-	redis := resdisOption.CreateConnect()
-	value, err := redis.Incr(ctx, key).Result()
+	redis, err := provider.NewRedis()
+	if err != nil {
+		return 0, fmt.Errorf("获取redis登录信息失败：%s", err.Error())
+	}
+	value, err := redis.Client.Incr(ctx, key).Result()
 	if err != nil {
 		return 0, fmt.Errorf("获取版本号失败：%s", err.Error())
 	}
 	if value == 1 {
 		expiration := 86410 //24小时零10秒
 		//设置key过期时间
-		_, err = redis.Expire(ctx, key, time.Duration(expiration)*time.Second).Result()
+		_, err = redis.Client.Expire(ctx, key, time.Duration(expiration)*time.Second).Result()
 		if err != nil {
 			return 0, fmt.Errorf("Error setting expiration:%s", err.Error())
 		}

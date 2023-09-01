@@ -11,11 +11,12 @@ import (
 	"lightweightpipline/configs"
 	"lightweightpipline/internal/biz/repo"
 	repo2 "lightweightpipline/internal/data/repo"
+	"lightweightpipline/third_party/redis_proxy"
 )
 
 // Injectors from wire.go:
 
-// 配置信息
+// =========配置信息=========
 func GetConfigure() (config.Configure, error) {
 	configure, err := config.ProvideConfigure()
 	if err != nil {
@@ -24,7 +25,8 @@ func GetConfigure() (config.Configure, error) {
 	return configure, nil
 }
 
-// 数据库上下文
+// =========数据库上下文=========
+// database
 func GetDbContext() (*repo.DbContext, error) {
 	configure, err := config.ProvideConfigure()
 	if err != nil {
@@ -37,7 +39,20 @@ func GetDbContext() (*repo.DbContext, error) {
 	return dbContext, nil
 }
 
-// 仓储层
+// redis
+func NewRedis() (*redis_proxy.RedisClient, error) {
+	configure, err := config.ProvideConfigure()
+	if err != nil {
+		return nil, err
+	}
+	redisClient, err := redis_proxy.NewRedisClient(configure)
+	if err != nil {
+		return nil, err
+	}
+	return redisClient, nil
+}
+
+// =========仓储层=========
 func NewCommandRepo() (repo.ICommandRepo, error) {
 	configure, err := config.ProvideConfigure()
 	if err != nil {
@@ -59,5 +74,7 @@ func NewCommandRepo() (repo.ICommandRepo, error) {
 var configureSet = wire.NewSet(config.ProvideConfigure)
 
 var dbContextSet = wire.NewSet(configureSet, repo.ProvideDbContext)
+
+var redisSet = wire.NewSet(configureSet, redis_proxy.NewRedisClient)
 
 var commandRepoSet = wire.NewSet(dbContextSet, repo2.NewCommandRepo)
