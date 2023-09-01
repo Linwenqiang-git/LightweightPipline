@@ -2,7 +2,7 @@ package repo
 
 import (
 	. "lightweightpipline/configs"
-	"log"
+	. "lightweightpipline/configs/settings/log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -28,7 +28,7 @@ func ProvideDbContext(configure Configure) (dbContext *DbContext, err error) {
 		connectStr := configure.Pgsql.GetConnectStr()
 		db, err = gorm.Open(postgres.Open(connectStr), &gorm.Config{})
 	default:
-		log.Fatal("不支持的数据库类型")
+		Logger.Fatal("不支持的数据库类型")
 	}
 
 	return &DbContext{db: db}, err

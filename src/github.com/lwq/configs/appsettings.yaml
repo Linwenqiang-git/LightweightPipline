@@ -44,4 +44,4 @@ redis:
   RedisPrefix: 'LightWeightPipline'
 
 log:
-  logPath: 'D:\\'
+  file: 'D:\\'

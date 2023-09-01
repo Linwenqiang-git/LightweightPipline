@@ -48,7 +48,7 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.24.0 // indirect
+	go.uber.org/zap v1.25.0 // indirect
 	golang.org/x/arch v0.4.0 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect

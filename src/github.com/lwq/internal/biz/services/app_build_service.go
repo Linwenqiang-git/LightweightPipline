@@ -17,8 +17,9 @@ import (
 	"strings"
 	"time"
 
+	. "lightweightpipline/configs/settings/log"
+
 	"github.com/ahmetb/go-linq/v3"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 type CommandResultDto struct {
@@ -88,7 +89,7 @@ func (b *AppBuildService) AppBuild(appName, branchName string) error {
 
 	//执行命令
 	go b.excuteCommand(appInfo.Path, appBuildRecord, buildRecordDetail, commandDic)
-	log.Info(fmt.Sprintf("start excute %s commands", appName))
+	Logger.Info(fmt.Sprintf("start excute %s commands", appName))
 	return nil
 }
 
@@ -243,12 +244,12 @@ func (b *AppBuildService) analyzeCommandResult(commandResult string, commandInfo
 		var errorKeyword []string
 		err := json.Unmarshal([]byte(commandInfo.ErrorKeyword), &errorKeyword)
 		if err != nil {
-			log.Error("Unmarshal ErrorKeyword error:", err)
+			Logger.Error(fmt.Sprintf("Unmarshal ErrorKeyword error:", err.Error()))
 			return true
 		}
 		for _, key := range errorKeyword {
 			if strings.Contains(strings.ToLower(commandResult), strings.ToLower(key)) {
-				log.Info(fmt.Sprintf("%s contains error keyword:%s", commandResult, key))
+				Logger.Info(fmt.Sprintf("%s contains error keyword:%s", commandResult, key))
 				return true
 			}
 		}

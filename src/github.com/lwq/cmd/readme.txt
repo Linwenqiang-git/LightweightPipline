@@ -15,7 +15,7 @@
     ✔ 依赖注入（wire）
     ✔ orm数据库创建（gorm）
     ✔ redis操作（go-redis）
-    日志输出
+    ✔ 日志集成（zap）
     swagger文档
 功能：
     ✔ 命令构建记录
