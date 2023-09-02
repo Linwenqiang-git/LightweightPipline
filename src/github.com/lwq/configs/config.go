@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"runtime"
 	"sync"
 
 	. "lightweightpipline/configs/settings"
@@ -24,7 +25,12 @@ func ProvideConfigure() (Configure, error) {
 	once.Do(func() {
 		viper.SetConfigName("appsettings") // 配置文件名
 		viper.SetConfigType("yaml")        // 配置文件类型
-		viper.AddConfigPath("../configs")  // 配置文件路径(需配置本地机密文件地址)
+		if runtime.GOOS == "windows" {
+			viper.AddConfigPath("D:\\Documents\\LingMao")
+		} else {
+			viper.AddConfigPath("/etc/app_pipline") // 配置文件路径(需配置本地机密文件地址)
+		}
+
 		// 加载配置文件
 		err := viper.ReadInConfig()
 		if err != nil {
