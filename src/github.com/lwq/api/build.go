@@ -18,12 +18,29 @@ func buildProductOrderCenter(c *gin.Context) {
 	buildProject(c, "ufx-scm-cloud-productordercenter", "stage")
 }
 
+// 构建全部应用
+func buildAllService(c *gin.Context) {
+	appbuildService, err := service.GetAppBuildService()
+	if err != nil {
+		c.JSON(200, Fail(200, err.Error()))
+	}
+	err = appbuildService.AllAppBuild()
+	var result Response
+	if err != nil {
+		result = Fail(500, err.Error())
+	} else {
+		result = SuccessWithMessage("任务已全部成功构建", nil)
+	}
+	c.JSON(200, result)
+}
+
 // 绑定构建服务
 func BindingBuildAppService(g *gin.Engine) {
 	engineApi := g.Group("/api/build")
 	{
 		engineApi.GET("/developcenter", buildDevelopeCenter)
 		engineApi.GET("/productordercenter", buildProductOrderCenter)
+		engineApi.GET("/allservice", buildAllService)
 	}
 }
 

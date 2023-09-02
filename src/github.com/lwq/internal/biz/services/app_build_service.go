@@ -44,6 +44,26 @@ func GetAppBuildService() (*AppBuildService, error) {
 	return service, err
 }
 
+// 构建全部应用
+func (b *AppBuildService) AllAppBuild() error {
+	var appInfo []Application
+	b.dbContext.GetDb().Find(&appInfo)
+	if len(appInfo) == 0 {
+		return fmt.Errorf("暂无可构建的应用")
+	}
+	for _, app := range appInfo {
+		err := b.AppBuild(app.Name, "dev")
+		if err != nil {
+			Logger.Error(fmt.Sprintf("构建【%s】，分支：【%s】出错：【%s】", app.Name, "dev", err.Error()))
+		}
+		err = b.AppBuild(app.Name, "stage")
+		if err != nil {
+			Logger.Error(fmt.Sprintf("构建【%s】，分支：【%s】出错：【%s】", app.Name, "stage", err.Error()))
+		}
+	}
+	return nil
+}
+
 // 应用构建
 func (b *AppBuildService) AppBuild(appName, branchName string) error {
 	//获取执行应用的信息

@@ -23,20 +23,20 @@ mysql:
   log-zap: false # 日志是否用zap保存到本地
 
 pgsql:
-  Addr: '47.110.42.73'   # 链接地址
+  Addr: '127.0.0.1'   # 链接地址
   port: 30232   # 链接端口
   config: ''  # 其他配置 例如时区
-  db-name: 'test_pipline'  # 数据库名称
+  db-name: 'test_pipline_local'  # 数据库名称
   username: 'postgres' # 数据库用户名
-  password: 'Tu4fPn#3u%BI&iMezEsz' # 数据库密码
+  password: '123456' # 数据库密码
   max-idle-conns: 10 # 连接池相关
   max-open-conns: 100 # 连接池相关
   log-mode: "" # 是控制台打印日志级别 "silent"、"error"、"warn"、"info" 不填默认info  填入silent可以关闭控制台日志
   log-zap: false # 日志是否用zap保存到本地
 
 redis:
-  Addr: '47.110.42.73:30279'
-  Password: 'NrJ*NVBa&OgE8B$y2Zgb'
+  Addr: '127.0.0.1:6003'
+  Password: '123456'
   DB: 0
   IsOpenSentinel: false
   RedisSentinelIp: []
