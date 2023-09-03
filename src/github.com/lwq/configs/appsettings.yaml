@@ -3,6 +3,7 @@ system:
   addr: '127.0.0.1:8090'
   db-type: 'pgsql'
   oss-type: 'local'    # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
+  build-root-dir: 'D:\\pipline_project' #项目构建根目录
   use-multipoint: false
   # IP限制次数 一个小时15000次
   iplimit-count: 15000
@@ -24,7 +25,7 @@ mysql:
 
 pgsql:
   Addr: '127.0.0.1'   # 链接地址
-  port: 30232   # 链接端口
+  port: 5432   # 链接端口
   config: ''  # 其他配置 例如时区
   db-name: 'test_pipline_local'  # 数据库名称
   username: 'postgres' # 数据库用户名
@@ -35,7 +36,7 @@ pgsql:
   log-zap: false # 日志是否用zap保存到本地
 
 redis:
-  Addr: '127.0.0.1:6003'
+  Addr: '127.0.0.1:6379'
   Password: '123456'
   DB: 0
   IsOpenSentinel: false
@@ -44,4 +45,4 @@ redis:
   RedisPrefix: 'LightWeightPipline'
 
 log:
-  file: 'D:\\'
+  directory: 'D:\\pipline_logs\\'

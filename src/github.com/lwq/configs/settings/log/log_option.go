@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/spf13/viper"
@@ -12,8 +13,7 @@ import (
 var Logger *zap.Logger
 
 type LogOption struct {
-	file           string
-	isOpenInternal bool
+	directory string
 }
 
 // 设置全局log
@@ -39,11 +39,18 @@ func (l *LogOption) updateLogFileName() {
 }
 
 func (l *LogOption) initGlobalLogger(date string) {
+	if _, err := os.Stat(l.directory); os.IsNotExist(err) {
+		// 目录不存在，创建它
+		err := os.MkdirAll(l.directory, os.ModePerm)
+		if err != nil {
+			panic("Error creating directory:" + err.Error())
+		}
+	}
 	cfg := zap.Config{
 		Encoding:         "json",
-		Level:            zap.NewAtomicLevelAt(zap.InfoLevel),         // 设置日志级别
-		OutputPaths:      []string{l.file + "info-" + date + ".log"},  // 设置日志文件路径
-		ErrorOutputPaths: []string{l.file + "error-" + date + ".log"}, // 设置错误日志文件路径
+		Level:            zap.NewAtomicLevelAt(zap.InfoLevel),              // 设置日志级别
+		OutputPaths:      []string{l.directory + "info-" + date + ".log"},  // 设置日志文件路径
+		ErrorOutputPaths: []string{l.directory + "error-" + date + ".log"}, // 设置错误日志文件路径
 		EncoderConfig: zapcore.EncoderConfig{
 			TimeKey:        "time",
 			LevelKey:       "level",
@@ -61,14 +68,13 @@ func (l *LogOption) initGlobalLogger(date string) {
 	var err error
 	Logger, err = cfg.Build()
 	if err != nil {
-		panic(fmt.Sprintf("init logger error:", err.Error()))
+		panic(fmt.Sprintf("init logger error:%s", err.Error()))
 	}
 	defer Logger.Sync() // 确保日志缓冲区中的所有日志都已写入文件
 }
 
 func NewLogOption() *LogOption {
 	return &LogOption{
-		file:           viper.GetString("log.file"),
-		isOpenInternal: false,
+		directory: viper.GetString("log.directory"),
 	}
 }

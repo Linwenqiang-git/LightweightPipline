@@ -16,7 +16,6 @@ func main() {
 		panic("read config err:" + err.Error())
 	}
 	NewLogOption().SetGlobalLogger()
-	Logger.Info("Init Log")
 	r.Run(config.System.Addr)
 }
 

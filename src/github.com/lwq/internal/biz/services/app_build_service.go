@@ -56,10 +56,6 @@ func (b *AppBuildService) AllAppBuild() error {
 		if err != nil {
 			Logger.Error(fmt.Sprintf("构建【%s】，分支：【%s】出错：【%s】", app.Name, "dev", err.Error()))
 		}
-		err = b.AppBuild(app.Name, "stage")
-		if err != nil {
-			Logger.Error(fmt.Sprintf("构建【%s】，分支：【%s】出错：【%s】", app.Name, "stage", err.Error()))
-		}
 	}
 	return nil
 }
@@ -91,7 +87,7 @@ func (b *AppBuildService) AppBuild(appName, branchName string) error {
 		return fmt.Errorf("应用%s未设置可用构建命令", appName)
 	}
 	//获取镜像名称
-	imageName, err := b.getImageName(appName)
+	imageName, err := b.getImageName(appInfo.ServiceName)
 	if err != nil {
 		return err
 	}
@@ -108,8 +104,8 @@ func (b *AppBuildService) AppBuild(appName, branchName string) error {
 	}
 
 	//执行命令
-	go b.excuteCommand(appInfo.Path, appBuildRecord, buildRecordDetail, commandDic)
-	Logger.Info(fmt.Sprintf("start excute %s commands", appName))
+	go b.excuteCommand(appInfo, appBuildRecord, buildRecordDetail, commandDic)
+	Logger.Info(fmt.Sprintf("start excute %s app:", appName))
 	return nil
 }
 
@@ -222,8 +218,18 @@ func (b *AppBuildService) getCommandDict(stageCommandInfo []StageCommand) (map[u
 }
 
 // 执行命令
-func (b *AppBuildService) excuteCommand(projectPath string, buildRecore *AppBuildRecord, excuteCommands []AppBuildRecordDetail, commandDict map[uint]Command) {
-	engine := NewEngine(projectPath)
+func (b *AppBuildService) excuteCommand(appInfo Application, buildRecore *AppBuildRecord, excuteCommands []AppBuildRecordDetail, commandDict map[uint]Command) {
+	engine, err := NewEngine(appInfo.Name, appInfo.CodeRepository)
+	if err != nil {
+		Logger.Error(fmt.Sprintf("Create engine fail：%s", err.Error()))
+		return
+	}
+	defer engine.Exit()
+	defer func() {
+		if err := recover(); err != nil {
+			Logger.Error(fmt.Sprintf("【Child goroutine exception】,appName:%s,err:%s", appInfo.Name, err))
+		}
+	}()
 	isSuccess := true
 	for _, command := range excuteCommands {
 		if commandInfo, ok := commandDict[command.CommandId]; ok {

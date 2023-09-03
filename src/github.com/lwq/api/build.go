@@ -10,12 +10,12 @@ import (
 
 // 构建大货前服务
 func buildDevelopeCenter(c *gin.Context) {
-	buildProject(c, "ufx-scm-cloud-developecenter", "stage")
+	buildProject(c, "UFX.SCM.Cloud.DevelopeCenter", "stage")
 }
 
 // 构建订单服务
 func buildProductOrderCenter(c *gin.Context) {
-	buildProject(c, "ufx-scm-cloud-productordercenter", "stage")
+	buildProject(c, "UFX.SCM.Cloud.ProductOrderCenter", "stage")
 }
 
 // 构建全部应用
