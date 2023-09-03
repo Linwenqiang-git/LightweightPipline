@@ -6,9 +6,9 @@ import "gorm.io/gorm"
 type Application struct {
 	gorm.Model
 	Name             string `sql:"COMMENT:'应用名称'"`
-	Path             string `sql:"COMMENT:'应用路径'"`
+	CodeRepository   string `sql:"COMMENT:'代码仓库地址'"`
 	ServiceName      string `sql:"COMMENT:'服务名称'"`
-	ClusterNameSpace string `sql:"COMMENT:'集群命令命名空间'"`
+	ClusterNameSpace string `sql:"COMMENT:'集群命名空间'"`
 }
 
 func (Application) TableName() string {
